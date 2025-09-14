@@ -52,43 +52,44 @@ Uses python 3.12
 - Built on top of [MQQC by Henrik Zauber](https://rdrr.io/rforge/mqqc/man/mqqc-package.html)
 
 #### folder structure:
-ProjectFolder_Dashboard/
-├── docker-compose.yml
-├── Dockerfile
-├── list_collect.sqlite
-├── Metadata.sqlite
-├── params.yaml
-├── requirements-docker.txt
-├── WSGI.py
-├── csvFiles/
-├── logs/
-├── .env
-└── src/
-	└── ProjectQCDashboard/
-		├── __init__.py
-		├── components/
-		│   ├── __init__.py
-		│   ├── AppLayout.py
-		│   ├── GenerateFig.py
-		│   ├── SyncDatabases.py
-		│   ├── UserInput.py
-		├── config/
-		│   ├── __init__.py
-		│   ├── configuration.py
-		│   ├── loadParams.py
-		│   ├── logger.py
-		│   ├── paths.py
-		├── helper/
-		│   ├── __init__.py
-		│   ├── CleanTempCsv.py
-		│   ├── common.py
-		│   ├── database.py
-		│   ├── Figures.py
-		│   ├── observer.py
-		│   ├── processDataForFig.py
-		│   ├── RunningContainer.py
-		│   ├── UpdateCSV.py
-		├── pipeline/
-		│   ├── __init__.py
-		│   ├── runApp_local.py
-		│   ├── runApp.py
+ProjectFolder_Dashboard/  
+├── docker-compose.yml  
+├── Dockerfile  
+├── list_collect.sqlite  
+├── Metadata.sqlite  
+├── params.yaml  
+├── requirements-docker.txt  
+├── WSGI.py  
+├── csvFiles/  
+├── logs/  
+├── .env  
+└── src/  
+	└── ProjectQCDashboard/  
+		├── __init__.py  
+		├── components/  
+		│   ├── __init__.py  
+		│   ├── AppLayout.py  
+		│   ├── GenerateFig.py  
+		│   ├── SyncDatabases.py  
+		│   ├── UserInput.py  
+		├── config/  
+		│   ├── __init__.py  
+		│   ├── configuration.py  
+		│   ├── loadParams.py  
+		│   ├── logger.py  
+		│   ├── paths.py  
+		├── helper/  
+		│   ├── __init__.py  
+		│   ├── CleanTempCsv.py  
+		│   ├── common.py  
+		│   ├── database.py  
+		│   ├── Figures.py  
+		│   ├── observer.py  
+		│   ├── processDataForFig.py  
+		│   ├── RunningContainer.py  
+		│   ├── UpdateCSV.py  
+		├── pipeline/  
+		│   ├── __init__.py  
+		│   ├── runApp_local.py  
+		│   ├── runApp.py  
+		  

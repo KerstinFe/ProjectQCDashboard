@@ -64,32 +64,32 @@ ProjectFolder_Dashboard/
 ├── logs/  
 ├── .env  
 └── src/  
-	└── ProjectQCDashboard/  
-		├── __init__.py  
-		├── components/  
-		│   ├── __init__.py  
-		│   ├── AppLayout.py  
-		│   ├── GenerateFig.py  
-		│   ├── SyncDatabases.py  
-		│   ├── UserInput.py  
-		├── config/  
-		│   ├── __init__.py  
-		│   ├── configuration.py  
-		│   ├── loadParams.py  
-		│   ├── logger.py  
-		│   ├── paths.py  
-		├── helper/  
-		│   ├── __init__.py  
-		│   ├── CleanTempCsv.py  
-		│   ├── common.py  
-		│   ├── database.py  
-		│   ├── Figures.py  
-		│   ├── observer.py  
-		│   ├── processDataForFig.py  
-		│   ├── RunningContainer.py  
-		│   ├── UpdateCSV.py  
-		├── pipeline/  
-		│   ├── __init__.py  
-		│   ├── runApp_local.py  
-		│   ├── runApp.py  
+&nbsp;└── ProjectQCDashboard/  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── __init__.py  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── components/  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└──__init__.py  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── AppLayout.py  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── GenerateFig.py  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── SyncDatabases.py  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── UserInput.py  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└──config/  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── __init__.py  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── configuration.py  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── loadParams.py  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── logger.py  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── paths.py  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── helper/  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── __init__.py  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── CleanTempCsv.py  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── common.py  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── database.py  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── Figures.py  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── observer.py  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── processDataForFig.py  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── RunningContainer.py  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── UpdateCSV.py  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── pipeline/  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└──__init__.py  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── runApp_local.py  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── runApp.py  
 		  

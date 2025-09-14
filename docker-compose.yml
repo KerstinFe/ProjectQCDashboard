@@ -1,0 +1,51 @@
+services:
+  dashboard:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      # Mount host folders into the container path used by the application
+      - ./csvFiles:/ProjectFolder_Dashboard/csvFiles
+      - ./logs:/ProjectFolder_Dashboard/logs
+      # External database mounts
+      - type: bind
+        source: ${MQQC_DB_PATH}
+        target: /external_MQQC_database
+        read_only: true
+      - type: bind
+        source: ${METADATA_DB_PATH}
+        target: /external_Meta_database
+        read_only: true
+      - type: bind
+        source: ${EXTERNAL_FILES_PATH}
+        target: /external_files
+        read_only: true
+      # Internal database mounts
+      - type: bind
+        source: ./list_collect.sqlite
+        target: /mqqc_database
+        read_only: false
+      - type: bind
+        source: ./Metadata.sqlite
+        target: /meta_database
+        read_only: false
+
+    restart: "no"  # Don't restart, container will be removed when stopped
+    # Remove container when it exits
+    labels:
+      - "podman.remove=true"
+volumes:
+  external_MQQC_database:
+    name: external_MQQC_database
+    external: true  
+
+  external_Meta_database:
+    name: external_Meta_database
+    external: true
+
+  mqqc_database:
+    name: mqqc_database
+
+  meta_database:
+    name: meta_database
+   

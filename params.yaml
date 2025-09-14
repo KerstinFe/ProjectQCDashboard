@@ -1,0 +1,14 @@
+# Parameters that change between environments or experiments
+data:
+  metadata_db_path: "Metadata.sqlite"
+  mqqc_db_path: "list_collect.sqlite"
+  Tables_Metadata_db: ["Metadata_Project", "Metadata_Sample", "TEMP_forJoin"]
+  Tables_MQQC_db: ['SingleFileReport_backup', 'SingleFileReport']
+
+
+processing:
+  DaysToMonitor: 90  # Might experiment with 3, 5, 10
+  DaysToMonitor_notRunningProject: 1
+  PollingIntervalSeconds: 60  # Polling interval for file change detection
+
+  

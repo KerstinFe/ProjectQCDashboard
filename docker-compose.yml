@@ -16,10 +16,6 @@ services:
         source: ${METADATA_DB_PATH}
         target: /external_Meta_database
         read_only: true
-      - type: bind
-        source: ${EXTERNAL_FILES_PATH}
-        target: /external_files
-        read_only: true
       # Internal database mounts
       - type: bind
         source: ./list_collect.sqlite

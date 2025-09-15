@@ -15,7 +15,7 @@ from ProjectQCDashboard.helper.observer import Observer_DBs, q
 from ProjectQCDashboard.helper.RunningContainer import _is_running_in_container
 from ProjectQCDashboard.components.SyncDatabases import Updater_DB
 from ProjectQCDashboard.config.paths import external_mqqc, external_meta, Metadata_DB, \
-                                    MQQC_DB, external_MQQC_path, external_Meta_path, external_files_path
+                                    MQQC_DB, external_MQQC_path, external_Meta_path
 from typing import Any, Dict, List, Optional, Union
 
 from queue import Queue, Empty

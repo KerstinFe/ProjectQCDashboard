@@ -27,7 +27,6 @@ DockerEnvir =  [var['source'] for var in DockerEnvir if isinstance(var, dict) an
 
 external_MQQC_path = [paths for paths in DockerEnvir if [re.search(r'list_collect.sqlite', paths)]]
 external_Meta_path = [paths for paths in DockerEnvir if [re.search(r'Metadata.sqlite', paths)]]
-external_files_path = [paths for paths in DockerEnvir if [re.search(r'FileFolder$', paths)]]
 
 
 

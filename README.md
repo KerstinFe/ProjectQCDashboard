@@ -61,17 +61,17 @@ ProjectFolder_Dashboard/
 ├── params.yaml  
 ├── requirements-docker.txt  
 ├── WSGI.py  
-├── csvFiles/  
-├── logs/  
-├── .env.example 
-├── BuildingContainerDockerCompose.bat (building Docker container with Podman)
-├── RestartingContainerDockerCompose.bat (restarting container)
-├── xampp-dashboard.conf (Apache config file for dashboard)
-├── uv.lock
-├── pyproject.toml
-├── pytest.ini
-└── src/  
-&nbsp;└── ProjectQCDashboard/  
+├── csvFiles/    
+├── logs/    
+├── .env.example   
+├── BuildingContainerDockerCompose.bat (building Docker container with Podman)  
+├── RestartingContainerDockerCompose.bat (restarting container)  
+├── xampp-dashboard.conf (Apache config file for dashboard)  
+├── uv.lock  
+├── pyproject.toml  
+├── pytest.ini  
+└── src/    
+&nbsp;└── ProjectQCDashboard/    
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── __init__.py  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── components/  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└──__init__.py  
@@ -85,23 +85,25 @@ ProjectFolder_Dashboard/
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── loadParams.py  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── logger.py  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── paths.py  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── helper/  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── helper/    
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── __init__.py  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── CleanTempCsv.py  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── common.py  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── database.py  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── Figures.py  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── observer.py  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── processDataForFig.py  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── RunningContainer.py  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── UpdateCSV.py  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── pipeline/  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└──__init__.py  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── runApp_local.py  (to run the dahboard locally, not in docker)
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── runApp.py  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── tests/  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└──__init__.py  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── conftest.py  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── test_common.py  		  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── test_database_and_updatecsv.py  	
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── test_df_forFigures.py  	
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── observer.py    
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── processDataForFig.py    
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── RunningContainer.py    
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── UpdateCSV.py    
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── pipeline/    
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└──__init__.py    
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── runApp_local.py  (to run the dahboard locally, not in docker)  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── runApp.py    
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── tests/    
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└──__init__.py    
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── conftest.py    
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── test_common.py  		    
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── test_database_and_updatecsv.py  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── test_df_forFigures.py  
+
+

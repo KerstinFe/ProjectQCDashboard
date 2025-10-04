@@ -43,6 +43,7 @@ It runs in docker and is served via an Apache server and Gunicorn.
 - [ ] include data from LC log
 - [ ] clean up code/ more generalized functions
 - [ ] give option to comment on project which writes into different database to aggregate information about project for when people leave
+- [ ] add data to github repro for testing
 
 
 #### dependencies:

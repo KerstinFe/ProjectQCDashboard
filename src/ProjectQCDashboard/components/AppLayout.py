@@ -4,17 +4,26 @@ import plotly.express as px
 import plotly.graph_objects as go
 from dash import Dash, dcc, html, Input, Output, dash, ctx
 from ProjectQCDashboard.helper.UpdateCSV import  update_df
-from ProjectQCDashboard.components.GenerateFig import generate_Fig
 from ProjectQCDashboard.helper.common import CreateOutputFilePath
-from ProjectQCDashboard.helper.database import query, Database_Call
+from ProjectQCDashboard.helper.database import Database_Call
 from ProjectQCDashboard.config.logger import get_configured_logger
+from ProjectQCDashboard.helper.AppLayoutComponents import (
+    generate_all_figures, generate_all_figures_labels, create_full_html,
+    create_page_header, generateOptions, LABELS_FOR_PLOTS, PLOT_CONFIG,
+    get_plot_keys, get_plot_graph_ids
+)
+from ProjectQCDashboard.config.configuration import ThresholdForTwoColumnsOfGraphs
 from typing import Any, List, Optional, Union
 from pathlib import Path
+import dash_bootstrap_components as dbc
+import plotly.io as pio
+from datetime import datetime
 
 logger = get_configured_logger(__name__)
+pio.templates.default = "plotly_white"
 
 class AppLayout:
-    def __init__(self, mqqc_db_path: Union[str, Path], metadata_db_path: Union[str, Path]) -> None:
+    def __init__(self, metadata_db_path: Union[str, Path]) -> None:
         """
         Initialize the application layout with database paths.
 
@@ -26,30 +35,49 @@ class AppLayout:
         """
 
         # Set URL base pathname for Apache proxy
-        self.app = Dash(__name__, url_base_pathname='/ProjectQCDashboard/')
+        # Use only the Bootstrap theme in external stylesheets; serve our `assets` folder explicitly
+        external_style = [dbc.themes.LUX]
+        assets_folder = Path(__file__).resolve().parent.parent / "assets"
+        self.app = Dash(
+            __name__,
+            url_base_pathname='/ProjectQCDashboard/',
+            external_stylesheets=external_style,
+            assets_folder=str(assets_folder),
+        )
        
         self.metadata_db_path = metadata_db_path
         
         # Use metadata database for getting project names
         self.metadata_db = Database_Call(self.metadata_db_path)
-        self.ProjectIDs = list(self.metadata_db.getProjectNamesDict().keys())
-        self.ProjectIDs.sort(reverse=True)  # Sort in place (don't reassign)
+        self.ProjectIDs = list(self.metadata_db.getProjectNamesDict("regex").keys())
+        self.ProjectIDs.sort(reverse=True) 
       
         self.FileName = ""
         self.OutputFilePath =  ""
         self.df = pd.DataFrame()
-
-        self.markdown_text = '''
-                # Project QC Dashboard
-                
-                ### only Projects measured in the past month available for now
-                
-                #### Trendlines display the median and standard deviation, or the rolling equivalent when enough measurements have been done
-                
-
-                ''' 
+    
+    def _build_graphs_container(self) -> html.Div:
+        """Build the graphs container with columns in the correct order from PLOT_CONFIG.
+        
+        :return: HTML Div containing all graph columns in proper order
+        :rtype: html.Div
+        """
+        # Build columns list explicitly to ensure order matches PLOT_CONFIG
+        columns = []
+        for key, (_, display_label, graph_id) in PLOT_CONFIG.items():
+            col = dbc.Col(
+                self.graph_card(graph_id, display_label),
+                md=6,
+                id=f'col-{key}'
+            )
+            columns.append(col)
+        
+        return html.Div(id='graphs-container', children=[
+            dbc.Row(columns, className="mb-4 g-4"),
+        ])
            
     def CreateApp(self) -> Any:
+        
 
         """
         Create the Dash application layout.
@@ -59,32 +87,58 @@ class AppLayout:
         """
 
         # Load project IDs only when creating the app layout
-                 
+      
         logger.info("Creating app layout...")
-        self.app.layout = html.Div(children=[
-                    html.Div([dcc.Markdown(children=self.markdown_text)]),
-                    html.Div([
-                        dcc.Dropdown(self.ProjectIDs, value=self.ProjectIDs[0] if self.ProjectIDs else None, id='ProjectIDs')
-                    ], style={'width': '48%', 'display': 'inline-block'}),
-                    *self.graph_section("Protein", "Protein-graph", "Proteins Identified per day in chosen Project"),
-                    *self.graph_section("AllPeptides", "AllPeptides-graph", "Peptide counts by File Type"),
-                    *self.graph_section("Intensity.100.", "Int-graph", "Intensity"),
-                    *self.graph_section("uniPepCount", "uniPepCount-graph", "Unique Peptide Count"),
-                    *self.graph_section("missed.cleavages.percent", "MisCleave-graph", "Missed Cleavages %"),
-                    *self.graph_section("MaxPressure_Pump", "MaxPressure_Pump-graph", "Max Pressure (Pump)"),
-                    html.Div([
-                        html.Button("Download CSV", id="btn_csv"),
+        # Warm up Plotly/px to avoid a large one-time initialization cost on
+        # the first call to px.scatter/CreateFig. This typically reduces the
+        # first-figure delay observed when the app is first used.
+        try:
+            small_df = pd.DataFrame({
+                'DateTime': [pd.Timestamp.now()],
+                'y': [1],
+                'FileType': ['warmup'],
+                'Name': ['warmup']
+            })
+            _ = px.scatter(small_df, x='DateTime', y='y', color='FileType', hover_name='Name')
+           
+        except Exception as e:
+            logger.info(f"Plotly warmup failed: {e}")
+        
+        # Main container using Bootstrap grid. Each graph is wrapped in a card for nicer styling.
+        self.app.layout = dbc.Container([
+                    # Header area (title) with a dark background spanning full width
+                    create_page_header(),
+                 
+                    # Dropdown and controls (not part of the dark header)
+                    dbc.Row(dbc.Col(dcc.Dropdown(self.ProjectIDs, value=self.ProjectIDs[0] if self.ProjectIDs else None, id='ProjectIDs'), width=6), className="mb-3"),
+
+                    # Checklist to select which plots are visible / exported
+                    dbc.Row(dbc.Col(dcc.Checklist(
+                                    id='plot-select',
+                                    options=generateOptions(),             # no surrounding [ ... ]
+                                    value=list(LABELS_FOR_PLOTS.keys()),   # a plain list of keys (default all selected)
+                                    labelStyle={'display': 'inline-block', 'margin-right': '12px'}
+                                ), width=12), className='mb-3'),
+
+                    # Placeholder for graphs — updated dynamically based on data size
+                    # Build graph columns explicitly to ensure correct order from PLOT_CONFIG
+                    self._build_graphs_container(),
+
+                    dbc.Row(dbc.Col(html.Div([
+                        dbc.Button("Download CSV", id="btn_csv", className="download-btn"),
+                        dbc.Button("Download Page (HTML)", id="btn_download_html", className="download-btn ms-2"),
                         dcc.Download(id="download-dataframe-csv"),
-                    ])
-                ])
+                        dcc.Download(id="download-html")
+                    ]), width=6)),
+                ], fluid=True)
+        
+        # Generate callback outputs dynamically from PLOT_CONFIG
+        graph_outputs = [Output(component_id=graph_id, component_property='figure') 
+                        for graph_id in get_plot_graph_ids()]
+        
         @self.app.callback(
-            Output(component_id="Protein-graph", component_property='figure'),
-            Output(component_id="AllPeptides-graph", component_property='figure'),
-            Output(component_id="Int-graph", component_property='figure'),
-            Output(component_id="uniPepCount-graph", component_property='figure'),
-            Output(component_id="MisCleave-graph", component_property='figure'),
-            Output(component_id="MaxPressure_Pump-graph", component_property='figure'),
-            
+            *graph_outputs,
+            Output(component_id='graphs-container', component_property='className'),
             Input('ProjectIDs', 'value')
             )
         def update_output_div(ProjectChosen: str) -> Any:
@@ -105,24 +159,32 @@ class AppLayout:
             if not os.path.exists(OutputFilePath):
                 logger.warning(f"CSV file does not exist: {OutputFilePath}")
                 empty_fig = go.Figure()
-                return empty_fig, empty_fig, empty_fig, empty_fig, empty_fig, empty_fig
+                # Return empty figures for all plots plus the className
+                return tuple([empty_fig] * len(PLOT_CONFIG) + [""])
             
             try:
                 # Create figure generators and call their CreateFig method
-                GenFig = generate_Fig(OutputFilePath)
-                protein_fig = GenFig.CreateFig("Protein")
-                peptides_fig = GenFig.CreateFig("AllPeptides")
-                intensity_fig = GenFig.CreateFig("Intensity.100.")
-                unipep_fig = GenFig.CreateFig("uniPepCount")
-                cleave_fig = GenFig.CreateFig("missed.cleavages.percent")
-                maxpressure_fig = GenFig.CreateFig("MaxPressure_Pump")
-                
-                return protein_fig, peptides_fig, intensity_fig, unipep_fig, cleave_fig, maxpressure_fig
+                # Load data to decide on layout
+                try:
+                    df = pd.read_csv(OutputFilePath)
+                except Exception:
+                    df = pd.DataFrame()
+              
+                # Generate all figures in PLOT_CONFIG order
+                all_figs = generate_all_figures(OutputFilePath)
+
+                # Decide whether to render graphs in one or two columns
+                single_column = len(df) >= ThresholdForTwoColumnsOfGraphs
+                class_name = "single-column" if single_column else ""
+
+                # Return all figures plus the className
+                return tuple(list(all_figs) + [class_name])
             
             except Exception as e:
                 logger.error(f"Error generating figures: {e}")
                 empty_fig = go.Figure()
-                return empty_fig, empty_fig, empty_fig, empty_fig, empty_fig, empty_fig 
+                # Return empty figures for all plots plus the className
+                return tuple([empty_fig] * len(PLOT_CONFIG) + [""])
 
         @self.app.callback(
             Output("download-dataframe-csv", "data"),
@@ -151,31 +213,119 @@ class AppLayout:
                 
             return dash.no_update
 
+        @self.app.callback(
+            Output("download-html", "data"),
+            Input("btn_download_html", "n_clicks"),
+            Input('ProjectIDs', 'value'),
+            Input('plot-select', 'value'),
+            prevent_initial_call=True,
+        )
+        def download_html(n_clicks: Any, ProjectChosen: str, selected_plots: List[str]) -> Any:
+            """
+            Build a standalone HTML snapshot containing only the currently shown plots
+            (no dropdown), preserving layout and styling. Returns a downloadable HTML file.
+            """
+            if ctx.triggered_id != "btn_download_html":
+                return dash.no_update
+
+            OutputFilePath = CreateOutputFilePath(ProjectChosen)
+            if not os.path.exists(OutputFilePath):
+                logger.warning(f"CSV file does not exist: {OutputFilePath}")
+                return dash.no_update
+
+            try:
+                
+                today_filename = datetime.now().strftime("%Y%m%d")
+
+                figs = generate_all_figures_labels(OutputFilePath, selected_plots)
+
+                # Read app CSS to include in the exported HTML
+                css_path = Path(__file__).resolve().parent.parent / "assets" / "custom.css"
+                css_text = ""
+                if css_path.exists():
+                    css_text = css_path.read_text(encoding='utf-8')
+
+                # Build HTML body: include each figure's html fragment
+                plots_html = []
+                for title, fig in figs:
+                    # to_html with full_html=False yields a div+script for the figure
+                    fig_html = pio.to_html(fig, include_plotlyjs='cdn', full_html=False)
+                    plots_html.append(f"<section class=\"export-plot\">\n<h3>{title}</h3>\n{fig_html}\n</section>")
+
+                body_html = "\n".join(plots_html)
+                full_html = create_full_html(css_text, ProjectChosen, body_html)
+
+                # Return bytes for download (utf-8)
+                def _write_html_bytes(bio: Any) -> None:
+                    """Writes the full HTML content to the provided binary IO stream.
+
+                    :param bio: file-like object to write bytes to
+                    :type bio: Any
+                    """
+                    bio.write(full_html.encode('utf-8'))
+
+                return dcc.send_bytes(_write_html_bytes, filename=f"{today_filename}_ProjectQC_{ProjectChosen}.html")
+
+            except Exception as e:
+                logger.error(f"Error creating HTML export: {e}")
+                return dash.no_update
+
+        # Generate visibility toggle outputs dynamically from PLOT_CONFIG
+        col_outputs = [Output(f'col-{key}', 'style') for key in get_plot_keys()]
+        
+        @self.app.callback(
+            *col_outputs,
+            Input('plot-select', 'value')
+        )
+        def toggle_plots(selected: List[str]):
+            # Return style dicts for each column: hide if not selected
+            return tuple(
+                {} if key in selected else {'display': 'none'}
+                for key in get_plot_keys()
+            )
+
         return self.app
+   
 
-    def graph_section(self, y_label: str, graph_id: str, label_text: str) -> List[Any]:
+    def graph_card(self, graph_id: str,label_text:str, figure: Optional[go.Figure] = None) -> dbc.Card:
         """
-        Create a graph section for the dashboard.
-
+        Return a Bootstrap Card that contains the graph and its title.
         :param y_label: The label for the y-axis
         :param graph_id: The ID for the graph component
-        :param label_text: The text label for the graph
+        :param figure: Optional pre-created figure to use
         :type y_label: str
         :type graph_id: str
         :type label_text: str
-        :return: A list containing the graph section components
-        :rtype: List[Any]
+        :type figure: Optional[go.Figure]
+        :return: A Bootstrap Card component containing the graph
+        :rtype: dbc.Card
         """
+        # Create an empty figure as placeholder. The real figures are provided
+        # by the `update_output_div` callback. 
 
-        if self.df.empty:
-            fig = go.Figure()
+        if figure is not None:
+            fig = figure
         else:
-            try:
-                fig = generate_Fig(self.OutputFilePath).CreateFig(y_label)
-            except Exception as e:
-                logger.error(f"Error creating initial figure for {y_label}: {e}")
-                fig = go.Figure()
-        return [
-            html.Div(children=[label_text], style={"font-weight": "bold"}),
-            dcc.Graph(id=graph_id, figure=fig)
-        ]
+            fig = go.Figure()
+
+        # Use CardHeader so the CSS pill selector (.graph-card .card-header) applies
+        card = dbc.Card(
+            [
+                dbc.CardHeader(html.Div(label_text, className="card-header-title")),
+                dbc.CardBody(
+                    dcc.Loading(
+                        dcc.Graph(
+                            id=graph_id,
+                            figure=fig,
+                            config={"displayModeBar": True},
+                            style={"background": "transparent"},
+                        ),
+                        type="circle",
+                    ),
+                ),
+            ],
+            className="graph-card mb-3",
+            style={"border": "1px solid #e6e9ef"},
+        )
+
+        return card

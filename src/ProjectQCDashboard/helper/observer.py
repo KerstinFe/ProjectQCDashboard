@@ -1,11 +1,9 @@
 import os
-from watchdog.observers import Observer
 from watchdog.observers.polling import PollingObserver
 from watchdog.events import LoggingEventHandler
 from pathlib import Path
 from queue import Queue
-import time
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Union
 q = Queue()
 from ProjectQCDashboard.config.configuration import PollingIntervalSeconds
 from ProjectQCDashboard.config.logger import get_configured_logger
@@ -112,8 +110,7 @@ def start_observer(q: Any, DB: Union[str, Path]) -> Any:
         path_to_watch = "/"
     
     handler = myHandler(q, DB)
-    # Use PollingObserver for better container compatibility
-    # Set polling interval to 60 seconds (default is 1 second)
+    # Set polling interval to 60 seconds (default is 1 second), Polling Observer is more robust on network drives
     observer = PollingObserver(timeout=PollingIntervalSeconds)
     observer.schedule(handler, path=path_to_watch, recursive=False)
     observer.start()

@@ -1,17 +1,21 @@
 FROM python:3.12-slim
 
+# Install uv binary
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
+
 # Set working directory
 WORKDIR /ProjectFolder_Dashboard
 
-# Copy requirements first for better caching
-COPY requirements-docker.txt .
+# Copy only dependency files first for better caching
+COPY pyproject.toml uv.lock ./
 
-# Install Python dependencies only
-RUN pip install --no-cache-dir -r requirements-docker.txt
+# Install dependencies to system Python
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv pip install --system .
 
 # Copy the application code
 COPY src/ ./src/
-COPY *.py ./
+COPY WSGI.py ./
 COPY *.sqlite ./
 COPY params.yaml ./
 COPY *.yml ./

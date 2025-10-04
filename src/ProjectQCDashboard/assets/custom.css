@@ -1,0 +1,156 @@
+/* General font */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+body {
+  font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  background: #eef1f6; /* slightly darker overall background */
+  color: #222;
+}
+
+/* Card styling for plots */
+.graph-card {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(33, 37, 41, 0.06);
+  border: 1px solid rgba(17,24,39,0.08); /* slightly stronger visible border */
+  overflow: visible; /* allow header pill to overflow */
+  position: relative;
+  padding-top: 1.1rem; /* space for the top header bar */
+}
+.graph-card .card-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 44px;
+  background: linear-gradient(180deg, #f8fafc, #f3f4f6);
+  border-radius: 12px 12px 0 0; /* rounded top corners match card */
+  box-shadow: 0 2px 6px rgba(33,37,41,0.04);
+  z-index: 3;
+  border-left: 1px solid rgba(17,24,39,0.06);
+  border-right: 1px solid rgba(17,24,39,0.06);
+  border-top: 1px solid rgba(17,24,39,0.06);
+  border-bottom: none; /* straight bottom edge */
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  color: #0f172a;
+  font-weight: 700; /* strong heading */
+}
+
+/* Make Plotly canvas transparent to show card rounded corners */
+.graph-card .js-plotly-plot,
+.graph-card .dash-graph,
+.graph-card .dash-graph .main-svg,
+.graph-card .dash-graph .bg,
+.graph-card .plotly,
+.graph-card .plotly .svg-container,
+.graph-card .plotly .main-svg,
+.graph-card .plotly .bg {
+  background: transparent !important;
+}
+
+/* Keep bottom corners rounded for Plotly containers */
+.graph-card .plotly,
+.graph-card .js-plotly-plot {
+  border-radius: 0 0 12px 12px;
+}
+
+/* Reduce CardBody padding so border is clearly visible */
+.graph-card .card-body {
+  padding-top: 1rem; /* make space below header bar */
+  padding-bottom: 0.6rem;
+  padding-left: 0.8rem;
+  padding-right: 0.8rem;
+}
+/* Card title styling */
+.graph-card .card-title {
+  font-weight: 600;
+  margin-bottom: 0.6rem;
+}
+
+
+/* Force the pill header title to be bold and slightly larger */
+.graph-card .card-header, .graph-card .card-header-title {
+  font-weight: 700 !important;
+  font-size: 0.95rem !important;
+}
+
+/* Small responsive spacing tweaks */
+.container-fluid {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+/* Page header: dark background with white title and subtle divider */
+.page-header {
+  background: linear-gradient(180deg, #0f172a, #0b1220); /* dark bluish gradient */
+  color: #fff;
+  padding: 1rem 0.75rem;
+  margin: 0 -1rem 0  -1rem; /* full width edge-to-edge inside container */
+
+}
+.page-header .page-header-content {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.page-header .page-title {
+  margin: 0;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #fff;
+
+}
+.page-header .page-subtitle, .page-header .page-note {
+  margin: 0;
+  color: rgba(255,255,255,0.85);
+  font-weight: 400;
+
+}
+
+/* Divider between header and controls */
+.page-header + .row, .page-header + .dbc-row {
+  border-top: 1px solid rgba(255,255,255,0.08);
+  padding-top: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+/* Strong overrides to prevent unwanted ALL-CAPS from third-party utilities */
+/* Target common utility classes and third-party selectors that set uppercase */
+.page-header, .page-header * {
+  text-transform: none !important;
+}
+
+/* When graphs-container gets `.single-column`, force two-column cols to full width */
+#graphs-container.single-column .col-md-6,
+#graphs-container.single-column .col-6 {
+  flex: 0 0 100% !important;
+  max-width: 100% !important;
+}
+
+/* Styled download button to match dashboard aesthetic */
+.download-btn {
+  background: linear-gradient(180deg, #0f172a, #0b1220);
+  color: #fff !important;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 8px;
+  padding: 0.45rem 0.9rem;
+  box-shadow: 0 6px 16px rgba(2,6,23,0.24);
+  font-weight: 600;
+}
+.download-btn:hover, .download-btn:focus {
+  background: linear-gradient(180deg, #131a30, #0d1324);
+  transform: translateY(-1px);
+}
+
+/* Export page tweaks (applies when CSS is embedded into exported HTML) */
+.export-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  background: #fff;
+  color: #0f172a;
+}
+.export-page h1 { margin-bottom: 1rem; }
+.export-plot { margin-bottom: 2.25rem; }
+.export-plot h3 { margin-bottom: 0.5rem; font-weight: 700; }

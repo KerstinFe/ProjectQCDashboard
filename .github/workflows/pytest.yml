@@ -1,0 +1,42 @@
+name: CI
+
+# Changed to manual trigger to avoid running CI automatically on every commit/PR
+# Use 'workflow_dispatch' to allow manual runs from the Actions UI when needed
+on: [push, pull_request]
+# on:
+#   workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: "Set up Python"
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: "pyproject.toml"
+      
+
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6   
+        # with:
+          # Install a specific version of uv.
+          # version: "0.8.22" 
+
+          
+      - name: Install dependencies
+        run: |
+          uv sync --locked
+          uv pip install pytest pytest-cov
+
+          
+
+      - name: Run tests
+        run: |
+          uv run pytest -q --maxfail=1 --cov=src/ProjectQCDashboard --cov-report=xml
+      - name: Upload coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage.xml

@@ -1,15 +1,13 @@
-import os
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
-
+import numpy as np
 from ProjectQCDashboard.helper.processDataForFig import Create_DFs
 from ProjectQCDashboard.config.logger import get_configured_logger
-from typing import Any, Dict, List, Optional, Union
-from pathlib import Path
+from typing import Any, Optional
+
 
 logger = get_configured_logger(__name__)
-
 
 def ScatterPlot(df: pd.DataFrame, y_Label: str) -> go.Figure:
     """Create a scatter plot for the given DataFrame and y-axis label.
@@ -58,7 +56,6 @@ def updateAxes_log(fig1: go.Figure, Template: Any) -> go.Figure:
     data = fig1.data
         )
     fig.update_layout(template=Template)
-    # b = bottom margin (in px), l = left, r = right, t = top
     fig.update_layout(margin=dict(l=60, r=60, t=40, b=140),paper_bgcolor="white")
     fig.update_layout(
                 yaxis = dict(
@@ -68,7 +65,6 @@ def updateAxes_log(fig1: go.Figure, Template: Any) -> go.Figure:
                     )
     
     return fig
-
 
 class Create_Figures():
     def __init__(self, df_Filtered: pd.DataFrame, y_Label: str) -> None:
@@ -84,10 +80,9 @@ class Create_Figures():
         """
         self.df_Filtered = df_Filtered
         self.y_Label = y_Label
-        # self.DefaultTemplate = "plotly_white"
         self.CreateDFs = Create_DFs(df_Filtered, y_Label)
 
-    def _AddTraces_Rolling1(self, fig: go.Figure, df_rolling: pd.DataFrame, label: str) -> Any:
+    def _AddTraces_Rolling(self, fig: go.Figure, df_rolling: pd.DataFrame, label: str) -> Any:
         """Add rolling traces to the figure.
 
         :param fig: The figure to update
@@ -117,69 +112,6 @@ class Create_Figures():
         
         return fig
 
-     
-
-    def _AddTraces_Rolling2(self, fig: go.Figure, df_rolling: pd.DataFrame, median_print: float,
-                            std_print: float, label: str) -> go.Figure:
-        """Add rolling traces to the figure.
-
-        :param fig: The figure to update
-        :type fig: go.Figure
-        :param df_rolling: The rolling DataFrame
-        :type df_rolling: pd.DataFrame
-        :param median_print: The printed median value
-        :type median_print: float
-        :param std_print: The printed standard deviation value
-        :type std_print: float
-        :param label: The labels for the traces, defaults to ['Upper', 'Lower', 'Median']
-        :type label: str
-        :return: The updated figure
-        :rtype: go.Figure
-        """
-       
-        if label == "Upper":
-   
-            fig.add_trace(
-                go.Scatter(
-                        name='Upper Bound',
-                        x=df_rolling["DateTime"],
-                        y=df_rolling["Upper"],
-                        mode='lines',
-                        marker=dict(color="#444"),
-                        line=dict(width=0),
-                        showlegend=False
-                    ))
-
-        elif label == "Lower":
-           
-            fig.add_trace(
-                  go.Scatter(
-                      name='Lower Bound',
-                      x=df_rolling["DateTime"],
-                      y=df_rolling["Lower"],
-                      marker=dict(color="#444"),
-                      line=dict(width=0),
-                      mode='lines',
-                      fillcolor='rgba(68, 68, 68, 0.3)',
-                      fill='tonexty',
-                      showlegend=False
-                  )
-               )
-
-        elif label == "Median":
-
-            fig.add_annotation(dict(font=dict(color='black',size=15),
-                        x=0,
-                        y=-0.4,
-                        showarrow=False,
-                        text=f"<br>Mean of median: {median_print:.1} <br> mean of standard deviation: {std_print:.1}" ,
-                        textangle=0,
-                        xanchor='left',
-                        align="center",
-                        xref="paper",
-                        yref="paper"))
-
-        return fig
 
     def _AddTraces_Median(self, fig: go.Figure, df_median: pd.DataFrame, label: str) -> go.Figure:
 
@@ -193,17 +125,15 @@ class Create_Figures():
         :return: The updated figure
         :rtype: go.Figure
         """
-
-     
-        
+            
         if label == "Median":
             name = "Median"
             color = "red"
         elif label == "Upper":
-            name = "Upper std"
+            name = "Upper std dev"
             color = "blue"
         elif label == "Lower":
-            name = "Lower std"
+            name = "Lower std dev"
             color = "blue"
 
 
@@ -219,10 +149,11 @@ class Create_Figures():
                   )
                )
 
+       
         return fig    
 
     def AddTraces_Rolling(self, fig: go.Figure, width: int) -> go.Figure:
-        """Add rolling mean and std traces to the figure.
+        """Add rolling mean and std dev traces to the figure.
 
             :param fig: The figure to update
             :type fig: go.Figure
@@ -231,13 +162,17 @@ class Create_Figures():
             :return: The updated figure
             :rtype: go.Figure
         """
-        df_rolling, median_print, std_print = self.CreateDFs.RollingMean_DF(width)
+        df_rolling, mean_print, median_print, std_print = self.CreateDFs.RollingMean_DF(width)
        
         for label in ["Upper", "Lower", "Median"]:
 
-            fig = self._AddTraces_Rolling1(fig, df_rolling, label)
-            fig = self._AddTraces_Rolling2(fig, df_rolling, median_print, std_print, label)
-            
+            fig = self._AddTraces_Rolling(fig, df_rolling, label)
+        try:
+            fig = add_point_legend(fig, mean_print, median_print, std_print)
+         
+        except Exception:
+            logger.exception("Failed to add legend-style summary for rolling plot")
+
         return fig
 
     def AddTraces_Median(self, fig: go.Figure) -> go.Figure:
@@ -248,10 +183,16 @@ class Create_Figures():
             :return: The updated figure
             :rtype: go.Figure
         """
-        df_median, median_print, std_print = self.CreateDFs.Median_DF()
+        df_median, mean_print, median_print, std_print = self.CreateDFs.Median_DF()
 
         for label in ["Median", "Upper", "Lower"]:
             fig = self._AddTraces_Median(fig, df_median, label)
+        
+        try:
+            fig = add_point_legend(fig, mean_print, median_print, std_print)
+       
+        except Exception:
+            logger.exception("Failed to add legend-style summary for median plot")
 
         return fig
 
@@ -277,5 +218,45 @@ class Create_Figures():
         return fig        
 
 
+def format_val(v: Optional[float]) -> str:
+    """Format a numeric value to string for display in annotations. Returns 'n/a' for None/NaN.
+    :param v: The value to format
+    :type v: Optional[float]
+    :return: The formatted string
+    :rtype: str
+    """
+    try:
+        if v is None:
+            return 'n/a'
+        if isinstance(v, str):
+            return 'n/a'
+        # numpy NaN check
+        if isinstance(v, (int, float)) and np.isnan(v):
+            return 'n/a'
+        return f"{float(v):.2f}"
+    except Exception:
+        return str(v)
 
+def add_point_legend(fig, mean_print, median_print, std_print) -> go.Figure:
+    """Add invisible legend entries to the figure for mean, median, and std dev.
+    :param fig: The figure to update
+    :type fig: go.Figure
+    :param mean_print: The mean value
+    :param median_print: The median value
+    :param std_print: The standard deviation value
+    :return: The updated figure
+    :rtype: go.Figure
+    """
+    # Add three invisible legend entries so the legend shows a 3-line summary
+    mean_text = f"mean: {format_val(mean_print)}"
+    median_text = f"median: {format_val(median_print)}"
+    std_text = f"std dev: {format_val(std_print)}"
+
+    for txt in (mean_text, median_text, std_text):
+        fig.add_trace(go.Scatter(x=[None], y=[None], mode='markers',
+                                marker=dict(opacity=0, size=0), showlegend=True,
+                                name=txt, hoverinfo='skip'))
+
+
+    return fig
 

@@ -1,16 +1,13 @@
-from datetime import date, datetime
+from datetime import  datetime
 import  os
 import re
-import sys
-import sqlite3
-from typing import Tuple, List
+from typing import Tuple
 from pathlib import Path
-import dateutil.relativedelta
 import pandas as pd
 from datetime import timedelta
 from ProjectQCDashboard.config.logger import get_configured_logger
 from ProjectQCDashboard.config.paths import CSVFolder
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Union
 
 logger = get_configured_logger(__name__)
 

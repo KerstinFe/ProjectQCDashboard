@@ -1,10 +1,6 @@
-import os
 import pandas as pd
-import plotly.express as px
-import plotly.graph_objects as go
 from ProjectQCDashboard.config.logger import get_configured_logger
-from typing import Any, Dict, List, Optional, Union, Tuple
-from pathlib import Path
+from typing import Tuple
 
 logger = get_configured_logger(__name__)
 
@@ -56,8 +52,10 @@ class Create_DFs():
         self.y_Label = y_Label
      
 
-    def RollingMean_DF(self, width: int) -> Tuple[pd.DataFrame, float, float]:
+    def RollingMean_DF(self, width: int) -> Tuple[pd.DataFrame, float, float, float]:
         """Calculate rolling mean and standard deviation DataFrame.
+        And additionally calculate mean and std of the actual data (not rolling) for the legend.
+
         :param width: The rolling window width
         :type width: int
         :return: The rolling mean DataFrame, mean and std values
@@ -83,24 +81,46 @@ class Create_DFs():
         # Only drop rows where the actual y_Label data is missing, not the rolling calculations
         df_rolling = df_rolling.dropna(subset=[self.y_Label])
 
-        median_print = median.mean()
-        std_print = std.mean()
-
-        return df_rolling, median_print, std_print
+        data_non_na = self.df_Filtered[self.y_Label].dropna()
+               
+        if data_non_na.empty:
+            mean_print = "NaN"
+            median_print = "NaN"
+            std_print = "NaN"
+        else:
+            mean_print = float(data_non_na.mean())
+            median_print = float(data_non_na.median())
+            std_print = float(data_non_na.std())
+       
+        return df_rolling, mean_print, median_print, std_print
     
-    def Median_DF(self) -> Tuple[pd.DataFrame, float, float]:
-        """Calculate median and standard deviation DataFrame.
-        :return: The median DataFrame, median and std values
-        :rtype: Tuple[pd.DataFrame, float, float]
+    def Median_DF(self) -> Tuple[pd.DataFrame, float, float, float]:
+        """Calculate mean, median and standard deviation DataFrame.
+        :return: The filtered DataFrame, mean, median, and std values
+        :rtype: Tuple[pd.DataFrame, float, float, float]
         """
-        
-        median = self.df_Filtered[self.y_Label].median()
-        std = self.df_Filtered[self.y_Label].std()
-        y1 = median - std
-        y2 = median + std
+   
+        # Coerce to numeric where possible; preserve NaN when coercion fails
+        numeric_series = pd.to_numeric(self.df_Filtered[self.y_Label], errors='coerce')
+        non_na_count = numeric_series.notna().sum()
+        # If we have no numeric data, skip numeric ops and set safe defaults
+        if non_na_count == 0:
+            median = float('nan')
+            std = float('nan')
+            y1 = float('nan')
+            y2 = float('nan')
+            
+        else:
+            numeric_non_na = numeric_series.dropna()
+            median = float(numeric_non_na.median())
+            mean = float(numeric_non_na.mean())            
+            std = float(numeric_non_na.std())
+            y1 = median - std
+            y2 = median + std
 
-        self.df_Filtered["Median"] = self.df_Filtered[self.y_Label].median()
-        self.df_Filtered["Upper"] = y1
-        self.df_Filtered["Lower"] = y2
+    
+        self.df_Filtered['Median'] = median
+        self.df_Filtered['Upper'] = y1
+        self.df_Filtered['Lower'] = y2
 
-        return self.df_Filtered, median, std
+        return self.df_Filtered, mean, median, std

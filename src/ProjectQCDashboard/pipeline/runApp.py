@@ -1,24 +1,17 @@
-# import pandas as pd
 import os
-import sys
-# import re
 import time
-import sqlite3
-from pathlib import Path
 from ProjectQCDashboard.helper.UpdateCSV import CSVUpdater
 from ProjectQCDashboard.components.AppLayout import AppLayout
 from ProjectQCDashboard.components.SyncDatabases import sync_database
-from ProjectQCDashboard.config.paths import csvFiles_Folder
+from ProjectQCDashboard.config.paths import CSVFolder
 from ProjectQCDashboard.helper.CleanTempCsv import CleanUp_csvFiles
-from ProjectQCDashboard.components.UserInput import DB_In_Container, get_UserInput
+from ProjectQCDashboard.components.UserInput import DB_In_Container
 from ProjectQCDashboard.helper.observer import Observer_DBs, q
 from ProjectQCDashboard.helper.RunningContainer import _is_running_in_container
 from ProjectQCDashboard.components.SyncDatabases import Updater_DB
-from ProjectQCDashboard.config.paths import external_mqqc, external_meta, Metadata_DB, \
-                                    MQQC_DB, external_MQQC_path, external_Meta_path
-from typing import Any, Dict, List, Optional, Union
-
-from queue import Queue, Empty
+from ProjectQCDashboard.config.paths import external_mqqc, external_meta, Metadata_DB, MQQC_DB
+from typing import Any
+from queue import Empty
 import threading
 from ProjectQCDashboard.config.logger import get_configured_logger
 
@@ -30,8 +23,6 @@ def create_app() -> Any:
 
     # Debug container detection
     logger.info(f"Container detection debug:")
-    logger.info(f"  /.dockerenv exists: {os.path.exists('/.dockerenv')}")
-    logger.info(f"  sys.stdin.isatty(): {sys.stdin.isatty()}")
     logger.info(f"  _is_running_in_container(): {_is_running_in_container()}")
     logger.info(f"Environment: { os.environ}")
     
@@ -41,11 +32,9 @@ def create_app() -> Any:
 
     # Import container-specific variables after container check
     
-
     DB_In_Container(external_mqqc, external_meta)
     sync_database(external_mqqc, MQQC_DB)
     sync_database(external_meta, Metadata_DB)
-
 
     logger.info("Initial updating/creation of csv files")
     CSVUpdater(MQQC_DB, Metadata_DB).FirstCreationOfCsvs()
@@ -62,12 +51,12 @@ def create_app() -> Any:
     background_thread_DB.daemon = True
     background_thread_DB.start()
 
-    deletingcsvFiles_thread = threading.Thread(target=CleanUp_csvFiles, args=(csvFiles_Folder, Metadata_DB,stop_event))
+    deletingcsvFiles_thread = threading.Thread(target=CleanUp_csvFiles, args=(CSVFolder, Metadata_DB,stop_event))
     deletingcsvFiles_thread.daemon = True
     deletingcsvFiles_thread.start()
 
     logger.info("Csvs created/updated, now starting Dashboard")
-    app = AppLayout(MQQC_DB, Metadata_DB).CreateApp()
+    app = AppLayout(Metadata_DB).CreateApp()
     logger.info("Dashboard started")
     # For production (Gunicorn), queue processing runs in background thread
     def process_queue(stop_event: Any) -> None:

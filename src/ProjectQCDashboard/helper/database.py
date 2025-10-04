@@ -1,11 +1,9 @@
 import sqlite3
 import pandas as pd
 from typing import List, Tuple, Optional, Union, Any, Dict
-from datetime import datetime, timedelta
-import re
-import time
+from datetime import datetime
 from pathlib import Path
-from ProjectQCDashboard.helper.common import convert_timestamps, IsStandardSample, SplitProjectName, GetLastDateToMonitor
+from ProjectQCDashboard.helper.common import IsStandardSample, SplitProjectName, GetLastDateToMonitor
 from ProjectQCDashboard.config.logger import get_configured_logger
 from ProjectQCDashboard.config.configuration import DaysToMonitor
 
@@ -63,7 +61,7 @@ class Database_Call:
                         WHERE datetime(CreationDate) > ?;'''  
 
 
-    def getProjectNamesDict(self) -> Dict[str, str]:
+    def getProjectNamesDict(self, whichDict: str) -> Dict[str, str]:
 
         """
         Get a dictionary of project names and their regex patterns.
@@ -80,36 +78,14 @@ class Database_Call:
         ProjectIDs_dict = {}
         for row in AllProjectNames:
             if not IsStandardSample(row):
-                ProjectID, ProjectID_regex, _, _ = SplitProjectName(row)
-                ProjectIDs_dict.update({ProjectID: ProjectID_regex})
+                
+                ProjectID, ProjectID_regex, ProjectID_regex_sql, _ = SplitProjectName(row)
+                if whichDict == "regex":
+                    ProjectIDs_dict.update({ProjectID: ProjectID_regex})
+                if whichDict == "sql_regex":
+                    ProjectIDs_dict.update({ProjectID: ProjectID_regex_sql})    
 
         return ProjectIDs_dict
-
-    def getProjectNamesDict_SqlRegex(self) -> Dict[str, str]:
-
-        """
-        Get a dictionary of project names and their regex patterns using SQL regex.
-        :return: Dictionary of project names and their regex patterns
-        :rtype: Dict[str, str]
-
-        """
-
-        lastDate = GetLastDateToMonitor(Days=DaysToMonitor)
-
-        converted = datetime.fromtimestamp(lastDate).strftime("%Y-%m-%d %H:%M:%S.000")
-
-        AllProjectNames =  query(self.metadata_db_path, self.SQLRequest_ProjectNames, params=(converted,))
-        AllProjectNames = list(set(AllProjectNames["ProjectID"].to_list()))
-
-        ProjectIDs_dict = {}
-        for row in AllProjectNames:
-            if not IsStandardSample(row):
-                ProjectID, _, ProjectID_regex_sql, _ = SplitProjectName(row)
-                ProjectIDs_dict.update({ProjectID: ProjectID_regex_sql})
-
-        return ProjectIDs_dict
-
-
 
 
        

@@ -2,13 +2,14 @@
 data:
   metadata_db_path: "Metadata.sqlite"
   mqqc_db_path: "list_collect.sqlite"
-  Tables_Metadata_db: ["Metadata_Project", "Metadata_Sample", "TEMP_forJoin"]
-  Tables_MQQC_db: ['SingleFileReport_backup', 'SingleFileReport']
+  Tables_Metadata_db: ["Metadata_Project", "Metadata_Sample"]
+  Tables_MQQC_db: ['SingleFileReport']
 
 
 processing:
-  DaysToMonitor: 90  # Might experiment with 3, 5, 10
+  DaysToMonitor: 90  # means that the last sample of that project was measured 90 days ago, not that the project date is 90 days ago
   DaysToMonitor_notRunningProject: 1
   PollingIntervalSeconds: 60  # Polling interval for file change detection
+  ThresholdForTwoColumnsOfGraphs: 75 # If more than this number of samples, show only one column of graphs
 
   

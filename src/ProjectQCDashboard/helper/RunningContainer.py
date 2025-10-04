@@ -1,5 +1,4 @@
 import os
-import sys  
 
 def _is_running_in_container() -> bool:
     """Detect if we're running in a Docker/Podman container

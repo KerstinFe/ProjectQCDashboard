@@ -1,10 +1,6 @@
-import os
-import pandas as pd
-from typing import Union, Any
+from typing import Union
 from pathlib import Path
-import plotly.express as px
 import plotly.graph_objects as go
-from ProjectQCDashboard.config import logger
 from ProjectQCDashboard.helper.Figures import ScatterPlot, updateAxes,updateAxes_log, Create_Figures
 from ProjectQCDashboard.helper.processDataForFig import preprocess_data, filter_df
 from ProjectQCDashboard.helper.UpdateCSV import  update_df
@@ -45,7 +41,7 @@ class generate_Fig():
         fig1 = updateAxes(fig1)
         fig = updateAxes_log(fig1, self.DefaultTemplate)
    
-        if self.df_Filtered.shape[0] >= 30:
+        if self.df_Filtered.shape[0] >= 30: # 30 as cutoff for rolling average
             fig = self.fig_creator.AddTraces_Rolling(fig, width = 15)
 
         elif self.df_Filtered.shape[0] > 5 and self.df_Filtered.shape[0] < 30 : 
@@ -54,4 +50,13 @@ class generate_Fig():
         else:
             fig = self.fig_creator.AddNothing(fig)
          
+        fig.update_layout(
+            template="plotly_white",
+            paper_bgcolor="rgba(0,0,0,0)",
+            plot_bgcolor="rgba(0,0,0,0)",
+            # margin=dict(l=10, r=10, t=36, b=10),
+            margin=dict(l=8, r=8, t=36, b=8),
+
+            font=dict(family="Inter, Arial", size=12)
+        ) 
         return fig

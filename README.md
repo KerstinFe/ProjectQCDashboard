@@ -16,37 +16,38 @@ It runs in docker and is served via an Apache server and Gunicorn.
 
 ### Prerequisites
 - Python 3.12
-- Docker/Podman (recommended for deployment)
-- Git
+- Docker/Podman (recommended for deployment, here I use Podman because of needed licences for Docker)
+
 
 ## Usage
-- The dashboard automatically detects changes in the MQQC and metadata database and updates project-level CSVs.
+- The dashboard automatically detects changes in the MQQC and metadata database and updates project-level .csvs.
 - Select a project from the dropdown to view QC metrics and trends.
-- Download CSVs for further analysis.
-- Export graphs as HTML/PDF (only partially impplemented).
+- Download csvs for further analysis.
+- Export graphs as HTML.
 
 ## Configuration
-- Main configuration is in `params.yaml` (edit paths, table names, and monitoring intervals as needed).
+- Main configuration is in `params.yaml` (table names, and monitoring intervals as needed).
 - Database and data folders are mounted via Docker Compose; update paths in `.env` for your environment.
 
 
 #### to do:
 - [x] include metadata extracted from raw files and project data
+- [x] improve UI
+- [x] include tests (started)
+- [x] include option to export dashboard as html
+- [x] include option to download csv files for further analysis
+- [x] add uv.lock file and pyproject.toml
+- [x] set up in docker container on server
 - [ ] include warning if sample seems to be corrupt
-- [ ] improve UI, potentially switching to HoloViz
-- [ ] include tests
 - [ ] choosing project not by dropdown but by entering project ID so also older projects can be looked at
 - [ ] include data from LC log
-- [ ] include option to export graphs as pdf
-- [x] include option to download csv files for further analysis
-- [ ] clean up code, add uv.lock file and pyproject.toml
-- [x] set up in docker container on server
+- [ ] clean up code/ more generalized functions
 - [ ] give option to comment on project which writes into different database to aggregate information about project for when people leave
 
 
 #### dependencies:
 Uses python 3.12
-- pandas (V 2.2.3), numpy (V 2.1.3), pythonnet (V 3.0.5) and watchdog (V 6.0.0),  plotly (6.1.2), dash (V 3.0.4), gunicorn (V 23.0.0) to be installed
+- dash-bootstrap-components>=2.0.4, flask==3.1.2, gunicorn==23.0.0, numpy==2.3.2, pandas==2.3.2, plotly==6.1.2, pyyaml>=6.0.3, watchdog==6.0.0
 
 ## Acknowledgements
 - Built on top of [MQQC by Henrik Zauber](https://rdrr.io/rforge/mqqc/man/mqqc-package.html)
@@ -55,14 +56,20 @@ Uses python 3.12
 ProjectFolder_Dashboard/  
 ├── docker-compose.yml  
 ├── Dockerfile  
-├── list_collect.sqlite  
-├── Metadata.sqlite  
+├── list_collect.sqlite (not uploaded due to data privacy)  
+├── Metadata.sqlite   (not uploaded due to data privacy)  
 ├── params.yaml  
 ├── requirements-docker.txt  
 ├── WSGI.py  
 ├── csvFiles/  
 ├── logs/  
-├── .env  
+├── .env.example 
+├── BuildingContainerDockerCompose.bat (building Docker container with Podman)
+├── RestartingContainerDockerCompose.bat (restarting container)
+├── xampp-dashboard.conf (Apache config file for dashboard)
+├── uv.lock
+├── pyproject.toml
+├── pytest.ini
 └── src/  
 &nbsp;└── ProjectQCDashboard/  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── __init__.py  
@@ -90,6 +97,11 @@ ProjectFolder_Dashboard/
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── UpdateCSV.py  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── pipeline/  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└──__init__.py  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── runApp_local.py  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── runApp_local.py  (to run the dahboard locally, not in docker)
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── runApp.py  
-		  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── tests/  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└──__init__.py  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── conftest.py  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── test_common.py  		  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── test_database_and_updatecsv.py  	
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── test_df_forFigures.py  	

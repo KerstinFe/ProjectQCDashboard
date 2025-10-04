@@ -1,23 +1,15 @@
-# import pandas as pd
-import os
-# import re
 import time
-import sqlite3
-from pathlib import Path
 from ProjectQCDashboard.helper.UpdateCSV import CSVUpdater
 from ProjectQCDashboard.components.AppLayout import AppLayout
-from ProjectQCDashboard.components.SyncDatabases import sync_database
-from ProjectQCDashboard.config.paths import csvFiles_Folder
+from ProjectQCDashboard.config.paths import CSVFolder
 from ProjectQCDashboard.helper.CleanTempCsv import CleanUp_csvFiles
-from ProjectQCDashboard.components.UserInput import DB_In_Container, get_UserInput
-from ProjectQCDashboard.helper.observer import start_observer, q, Observer_DBs
+from ProjectQCDashboard.components.UserInput import  get_UserInput
+from ProjectQCDashboard.helper.observer import q, Observer_DBs
 from ProjectQCDashboard.helper.RunningContainer import _is_running_in_container
-from ProjectQCDashboard.components.SyncDatabases import Updater_DB
-
-from queue import Queue, Empty
+from queue import Empty
 import threading
 from ProjectQCDashboard.config.logger import get_configured_logger
-from typing import Any, Dict, List, Optional, Union
+from typing import Any
 
 logger = get_configured_logger(__name__)
 
@@ -44,12 +36,12 @@ def create_app() -> Any:
     background_thread_DB.daemon = True
     background_thread_DB.start()
 
-    deletingcsvFiles_thread = threading.Thread(target=CleanUp_csvFiles, args=(csvFiles_Folder, Metadata_DB,stop_event))
+    deletingcsvFiles_thread = threading.Thread(target=CleanUp_csvFiles, args=(CSVFolder, Metadata_DB,stop_event))
     deletingcsvFiles_thread.daemon = True
     deletingcsvFiles_thread.start()
 
     logger.info("Csvs created/updated, now starting Dashboard")
-    app = AppLayout(MQQC_DB, Metadata_DB).CreateApp()
+    app = AppLayout(Metadata_DB).CreateApp()
     logger.info("Dashboard started")
     # For production (Gunicorn), queue processing runs in background thread
     def process_queue(stop_event: Any) -> None:

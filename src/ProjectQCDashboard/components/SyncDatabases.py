@@ -1,9 +1,8 @@
 import os
 import shutil
-import pandas as pd
 from ProjectQCDashboard.config.logger import get_configured_logger
 from ProjectQCDashboard.helper.UpdateCSV import CSVUpdater
-from typing import Any, Dict, List, Optional, Union
+from typing import Union
 from pathlib import Path
 
 logger = get_configured_logger(__name__)

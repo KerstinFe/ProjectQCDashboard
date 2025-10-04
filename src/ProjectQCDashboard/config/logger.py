@@ -1,18 +1,10 @@
 import logging
-from typing import Dict, Any, Optional
-from ProjectQCDashboard.config.paths import PACKAGE_LOCATION
-from pathlib import Path
-import os
+from typing import Optional
+from ProjectQCDashboard.config.paths import log_filepath
 import sys
 
 logging_str = "[%(asctime)s: %(levelname)s: %(module)s: %(message)s]"
 DateFormat = "%Y-%m-%d %H:%M:%S"
-
-log_dir = Path(PACKAGE_LOCATION/ "logs" ).as_posix()
-os.makedirs(log_dir, exist_ok=True) 
-
-log_filepath = Path(PACKAGE_LOCATION/ "logs" / "message.log").as_posix()
-
 
 def get_configured_logger(name: Optional[str] = None) -> logging.Logger:
     """Get a configured logger instance.

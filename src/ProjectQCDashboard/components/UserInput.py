@@ -1,7 +1,6 @@
 import os
-import sys
 from pathlib import Path
-from typing import Optional, Tuple, Union
+from typing import Tuple, Union
 from ProjectQCDashboard.config.configuration import  TablesMetaData, TablesMQQCData
 from ProjectQCDashboard.helper.database import GetTableNames
 from ProjectQCDashboard.config.paths import DEFAULT_METADATA_DB, DEFAULT_MQQC_DB

@@ -7,6 +7,9 @@ Instead of showing QC metrics per run, this dashboard aggregates and visualizes 
 
 It runs in docker and is served via an Apache server and Gunicorn.
 
+![Here is a flowchart of the workflow.](/Display/FlowDiagram.png)
+
+
 ## Features
 - Monitors MQQC sqlite database and metadata database for changes
 - Extracts data from the past two months and write csv files per project with often used QC parameters (Protein IDs, Peptide count, maximum Intensity,Unique Peptide Count, Missed Cleavages %, Maximum pump pressure)

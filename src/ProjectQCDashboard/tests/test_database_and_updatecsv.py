@@ -2,7 +2,8 @@ import os
 import pandas as pd
 from pathlib import Path
 import sqlite3
-from ProjectQCDashboard.helper.database import Database_Call, query, GetTableNames
+from ProjectQCDashboard.helper.database import Database_Call, query
+from ProjectQCDashboard.components.UserInput import GetTableNames
 from ProjectQCDashboard.helper.UpdateCSV import CSVUpdater
 
 

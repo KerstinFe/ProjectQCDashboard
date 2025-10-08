@@ -5,6 +5,7 @@ from ProjectQCDashboard.helper.Figures import ScatterPlot, updateAxes,updateAxes
 from ProjectQCDashboard.helper.processDataForFig import preprocess_data, filter_df
 from ProjectQCDashboard.helper.UpdateCSV import  update_df
 from ProjectQCDashboard.config.logger import get_configured_logger
+from ProjectQCDashboard.config.configuration import ThresholdForRollingMean
 
 logger = get_configured_logger(__name__)
 
@@ -41,7 +42,7 @@ class generate_Fig():
         fig1 = updateAxes(fig1)
         fig = updateAxes_log(fig1, self.DefaultTemplate)
    
-        if self.df_Filtered.shape[0] >= 30: # 30 as cutoff for rolling average
+        if self.df_Filtered.shape[0] >= ThresholdForRollingMean: # 30 as cutoff for rolling average
             fig = self.fig_creator.AddTraces_Rolling(fig, width = 15)
 
         elif self.df_Filtered.shape[0] > 5 and self.df_Filtered.shape[0] < 30 : 

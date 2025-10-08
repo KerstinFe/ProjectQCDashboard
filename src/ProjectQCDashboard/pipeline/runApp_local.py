@@ -4,7 +4,7 @@ from ProjectQCDashboard.components.AppLayout import AppLayout
 from ProjectQCDashboard.config.paths import CSVFolder
 from ProjectQCDashboard.helper.CleanTempCsv import CleanUp_csvFiles
 from ProjectQCDashboard.components.UserInput import  get_UserInput
-from ProjectQCDashboard.helper.observer import q, Observer_DBs
+from ProjectQCDashboard.components.Observer import q, Observer_DBs
 from ProjectQCDashboard.helper.RunningContainer import _is_running_in_container
 from queue import Empty
 import threading

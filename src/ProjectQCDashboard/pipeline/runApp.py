@@ -3,13 +3,12 @@ import time
 from ProjectQCDashboard.helper.UpdateCSV import CSVUpdater
 from ProjectQCDashboard.components.AppLayout import AppLayout
 from ProjectQCDashboard.components.SyncDatabases import sync_database
-from ProjectQCDashboard.config.paths import CSVFolder
-from ProjectQCDashboard.helper.CleanTempCsv import CleanUp_csvFiles
 from ProjectQCDashboard.components.UserInput import DB_In_Container
-from ProjectQCDashboard.helper.observer import Observer_DBs, q
-from ProjectQCDashboard.helper.RunningContainer import _is_running_in_container
+from ProjectQCDashboard.components.Observer import Observer_DBs, q
 from ProjectQCDashboard.components.SyncDatabases import Updater_DB
-from ProjectQCDashboard.config.paths import external_mqqc, external_meta, Metadata_DB, MQQC_DB
+from ProjectQCDashboard.helper.CleanTempCsv import CleanUp_csvFiles
+from ProjectQCDashboard.helper.RunningContainer import _is_running_in_container
+from ProjectQCDashboard.config.paths import CSVFolder, external_mqqc, external_meta, Metadata_DB, MQQC_DB
 from typing import Any
 from queue import Empty
 import threading
@@ -32,21 +31,23 @@ def create_app() -> Any:
 
     # Import container-specific variables after container check
     
-    DB_In_Container(external_mqqc, external_meta)
-    sync_database(external_mqqc, MQQC_DB)
+    DB_In_Container(external_mqqc, external_meta) # checks whether the DBs exist in the container
+    sync_database(external_mqqc, MQQC_DB) # sync the external DBs to the internal ones
     sync_database(external_meta, Metadata_DB)
 
     logger.info("Initial updating/creation of csv files")
-    CSVUpdater(MQQC_DB, Metadata_DB).FirstCreationOfCsvs()
+    CSVUpdater(MQQC_DB, Metadata_DB).FirstCreationOfCsvs() # Create/Update CSV files at startup
+    logger.info("Csvs created/updated")
     
-    Updater = Updater_DB(MQQC_DB, Metadata_DB)
+    Updater = Updater_DB(MQQC_DB, Metadata_DB) # Create instance of the updater class
     # Watch the mounted external files (the actual mount points)
-    Observer = Observer_DBs(external_mqqc, external_meta)
+    Observer = Observer_DBs(external_mqqc, external_meta) # Create instance of the observer class
     time.sleep(2)
     
     # Start background threads
     stop_event = threading.Event()
   
+    # background thread to watch for external DB changes
     background_thread_DB = threading.Thread(target=Observer.start_observing, args=(stop_event,))
     background_thread_DB.daemon = True
     background_thread_DB.start()
@@ -56,7 +57,7 @@ def create_app() -> Any:
     deletingcsvFiles_thread.start()
 
     logger.info("Csvs created/updated, now starting Dashboard")
-    app = AppLayout(Metadata_DB).CreateApp()
+    app = AppLayout(Metadata_DB).CreateApp() # Create the Dash app layout
     logger.info("Dashboard started")
     # For production (Gunicorn), queue processing runs in background thread
     def process_queue(stop_event: Any) -> None:

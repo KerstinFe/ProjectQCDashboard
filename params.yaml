@@ -11,5 +11,30 @@ processing:
   DaysToMonitor_notRunningProject: 1
   PollingIntervalSeconds: 60  # Polling interval for file change detection
   ThresholdForTwoColumnsOfGraphs: 75 # If more than this number of samples, show only one column of graphs
+  ThresholdForRollingMean: 30 # If more than this number of samples, show rolling mean in graphs
+
+
+# The order of items in this dictionary determines the order of plots everywhere:
+#   - Layout column order
+#   - Callback registration order
+#   - Figure generation order
+#   - Export order
+
+#Structure: key -> (y_label_for_data (header in SQL database), display_label, graph_id (needed for callbacks))
+
+ColumnsDatabase:
+  PLOT_CONFIG:
+    - [Protein, ["Protein", "Proteins Identified", "Protein-graph"]]
+    - [AllPeptides, ["AllPeptides", "Peptide counts", "AllPeptides-graph"]]
+    - [Intensity_100, ["Intensity.100.", "Intensity", "Int-graph"]]
+    - [uniPepCount, ["uniPepCount", "Unique Peptide Count", "uniPepCount-graph"]]
+    - [missed_cleavages_percent, ["missed.cleavages.percent", "Missed Cleavages %", "MisCleave-graph"]]
+    - [InitialPressure_Pump, ["InitialPressure_Pump", "Initial Pressure (Pump)", "InitialPressure-graph"]]
+    - [MaxPressure_Pump, ["MaxPressure_Pump", "Max Pressure (Pump)", "MaxPressure_Pump-graph"]]
+    - [MinPressure_Pump, ["MinPressure_Pump", "Min Pressure (Pump)", "MinPressure-graph"]]
+    - [Std_Pressure_Pump, ["Std_Pressure_Pump", "Std Pressure (Pump)", "StdPressure-graph"]]
+    - [AnalyzerTemp_mean, ["AnalyzerTemp_mean", "Analyzer Massspec mean temperature (°C)", "AnalyzerTempMean-graph"]]
+    - [AnalyzerTemp_std, ["AnalyzerTemp_std", "Analyzer Massspec std temperature (°C)", "AnalyzerTempStd-graph"]]
+
 
   

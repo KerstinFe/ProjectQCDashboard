@@ -3,9 +3,8 @@ import pandas as pd
 import numpy as np
 import re
 from ProjectQCDashboard.helper.database import query, Database_Call
-from ProjectQCDashboard.helper.common import convert_timestamps, removeLastNumber_fromFileName,IsStandardSample
+from ProjectQCDashboard.helper.common import convert_timestamps, removeLastNumber_fromFileName,IsStandardSample, CreateOutputFilePath
 from ProjectQCDashboard.config.paths import CSVFolder
-from ProjectQCDashboard.helper.common import CreateOutputFilePath
 from ProjectQCDashboard.config.logger import get_configured_logger
 from typing import Any, Union
 from pathlib import Path
@@ -23,16 +22,17 @@ class CSVUpdater:
         """
         self.mqqc_db_path = mqqc_db_path
         self.metadata_db_path = metadata_db_path
-        self.SQLRequest = '''SELECT Name,"System.Time.s", "Intensity.100.", 
-                            "missed.cleavages.percent",AllPeptides ,uniPepCount, Protein 
-                            FROM SingleFileReport'''
-        self.SQLRequest_Project = '''SELECT Name,"System.Time.s", "Intensity.100.", 
-                        "missed.cleavages.percent",AllPeptides ,uniPepCount, Protein 
-                        FROM SingleFileReport
-                        WHERE Name LIKE ?'''
+        
+        #Create SQL statements based on the PLOT_CONFIG 
+        db_mqqc = Database_Call(self.mqqc_db_path)
+        self.SQLRequest = db_mqqc.GetSQLRequest_matchingCols("SingleFileReport", SQLRequest="normal")
+        self.SQLRequest_Project = db_mqqc.GetSQLRequest_matchingCols("SingleFileReport", SQLRequest="Name")
         self.SQLRequest_Project_meta = '''SELECT * 
-        FROM Metadata_Sample
-        WHERE ProjectID LIKE ? '''
+                                        FROM Metadata_Sample
+                                        WHERE ProjectID LIKE ? '''
+
+
+
 
     def _reformatRow(self, idx: int, row: Any, DateIdx: int) -> Any:
         """Reformat a row of the DataFrame.

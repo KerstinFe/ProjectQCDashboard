@@ -1,8 +1,8 @@
 import os
 from pathlib import Path
-from typing import Tuple, Union
+from typing import Tuple, Union, List
+import sqlite3
 from ProjectQCDashboard.config.configuration import  TablesMetaData, TablesMQQCData
-from ProjectQCDashboard.helper.database import GetTableNames
 from ProjectQCDashboard.config.paths import DEFAULT_METADATA_DB, DEFAULT_MQQC_DB
 from ProjectQCDashboard.helper.common import MakePathNice
 from ProjectQCDashboard.config.logger import get_configured_logger
@@ -67,7 +67,24 @@ def _validate_database_path(db_path: str, Tables: list) -> bool:
     else:
         logger.info(f'{db_path} does not exist.')
         return False
+    
+def GetTableNames(DB: str) -> List[str]:
 
+    """Get a list of table names from the database.
+
+    :return: List of table names
+    :rtype: List[str]
+    """
+    
+    try:
+        with sqlite3.connect(DB) as con:
+            cur = con.cursor()
+            names = cur.execute('''SELECT name FROM sqlite_master WHERE type='table';''')
+            names = cur.fetchall()
+            return [item for t in names for item in t]
+    except sqlite3.Error as e:
+        logger.error(f"Error getting table names: {e}")
+        return []
 
 def get_UserInput_Fun(defaultdb: str, Tables: list) -> str:
     """Function to get the location of the DB file when starting the script.

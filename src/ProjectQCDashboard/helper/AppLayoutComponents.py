@@ -4,48 +4,12 @@ from pathlib import Path
 import plotly.graph_objects as go
 from dash import html
 import dash_bootstrap_components as dbc
-from ProjectQCDashboard.components.GenerateFig import generate_Fig
+from ProjectQCDashboard.helper.GenerateFig import generate_Fig
 from ProjectQCDashboard.config.logger import get_configured_logger
+from ProjectQCDashboard.config.configuration import PLOT_CONFIG, ThresholdForRollingMean, DaysToMonitor
 from datetime import datetime
-
 logger = get_configured_logger(__name__)
 
-# ============================================================================
-# CENTRAL PLOT CONFIGURATION
-# ============================================================================
-# This OrderedDict is the SINGLE SOURCE OF TRUTH for all plot definitions.
-# The order of items in this dictionary determines the order of plots everywhere:
-#   - Layout column order
-#   - Callback registration order
-#   - Figure generation order
-#   - Export order
-#
-# To reorder plots: simply reorder the entries below, then restart the app.
-# potentially also delete the cache from the browser as the order can be cached there too.
-# To add a plot: add a new entry with (key, y_label, display_label, graph_id).
-# To remove a plot: delete the entry.
-#
-# Structure: key -> (y_label_for_data, display_label, graph_id)
-#   - key: Internal identifier used throughout the code
-#   - y_label_for_data: Column name or data identifier for figure generation
-#   - display_label: Human-readable label shown in UI
-#   - graph_id: Dash component ID for the graph (must be unique)
-#
-# ============================================================================
-PLOT_CONFIG = OrderedDict([
-    ('Protein', ('Protein', 'Proteins Identified', 'Protein-graph')),
-    ('AllPeptides', ('AllPeptides', 'Peptide counts', 'AllPeptides-graph')),
-    ('Intensity_100', ('Intensity.100.', 'Intensity', 'Int-graph')),
-    ('uniPepCount', ('uniPepCount', 'Unique Peptide Count', 'uniPepCount-graph')),
-    ('missed_cleavages_percent', ('missed.cleavages.percent', 'Missed Cleavages %', 'MisCleave-graph')),
-   ('InitialPressure_Pump', ('InitialPressure_Pump', 'Initial Pressure (Pump)', 'InitialPressure-graph')),
-    ('MaxPressure_Pump', ('MaxPressure_Pump', 'Max Pressure (Pump)', 'MaxPressure_Pump-graph')),
-   ('MinPressure_Pump', ('MinPressure_Pump', 'Min Pressure (Pump)', 'MinPressure-graph')),
-    ('Std_Pressure_Pump', ('Std_Pressure_Pump', 'Std Pressure (Pump)', 'StdPressure-graph')),
-    ('AnalyzerTemp_mean', ('AnalyzerTemp_mean', 'Analyzer Massspec mean temperature (°C)', 'AnalyzerTempMean-graph')),
-    ('AnalyzerTemp_std', ('AnalyzerTemp_std', 'Analyzer Massspec std temperature (°C)', 'AnalyzerTempStd-graph')),
-    
-])
 
 # Dictionaries derived from PLOT_CONFIG for backwards compatibility
 DEFAULT_PLOTS = OrderedDict([(key, value[0]) for key, value in PLOT_CONFIG.items()])
@@ -153,11 +117,15 @@ def create_page_header() -> html.Div:
                             className="page-title",
                         ),
                         html.H5(
-                            "only Projects measured in the past month are available for now",
+                            f"only Projects measured in the past {DaysToMonitor} days are available for now",
                             className="page-subtitle",
                         ),
                         html.H5(
-                            "Trendlines display the median and standard deviation, or the rolling equivalent when enough measurements have been done",
+                            [
+                                "Trendlines display the median and standard deviation, or the rolling equivalent ",
+                                html.Br(),
+                                f"when at least {ThresholdForRollingMean} measurements have been done",
+                            ],
                             className="page-note",
                         ),
                     ], className="page-header-content"),

@@ -55,3 +55,7 @@ Metadata.sqlite
 list_collect.sqlite
 *.sqlite
 .pytest_cache/
+
+*.pdf
+*.svg
+*.png

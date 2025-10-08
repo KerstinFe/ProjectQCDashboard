@@ -1,6 +1,6 @@
 from ProjectQCDashboard.config.logger import get_configured_logger
 from ProjectQCDashboard.config.loadParams import load_params
-
+from collections import OrderedDict
 
 logger = get_configured_logger(__name__)
 
@@ -14,4 +14,10 @@ DaysToMonitor = PARAMS.get('processing', {}).get('DaysToMonitor')
 DaysToMonitor_notRunningProject = PARAMS.get('processing', {}).get('DaysToMonitor_notRunningProject')
 PollingIntervalSeconds = PARAMS.get('processing', {}).get('PollingIntervalSeconds')
 ThresholdForTwoColumnsOfGraphs = PARAMS.get('processing', {}).get('ThresholdForTwoColumnsOfGraphs')
+ThresholdForRollingMean = PARAMS.get('processing', {}).get('ThresholdForRollingMean')
+
+plot_config_seq = PARAMS.get('ColumnsDatabase', {}).get('PLOT_CONFIG')
+PLOT_CONFIG = OrderedDict(plot_config_seq)
+
+
 

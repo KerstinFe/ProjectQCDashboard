@@ -7,7 +7,7 @@ Instead of showing QC metrics per run, this dashboard aggregates and visualizes 
 
 It runs in docker and is served via an Apache server and Gunicorn.
 
-![Here is a flowchart of the workflow.](/Display/FlowDiagram.png)
+![Here is a flowchart of the workflow.](/image/FlowDiagram.png)
 
 
 ## Features

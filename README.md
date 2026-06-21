@@ -2,7 +2,7 @@
  
 [![Python 3.12+](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/downloads/)
  
-An interactive quality control dashboard for mass spectrometry proteomics data. Built on top of [MQQC by Henrik Zauber](https://rdrr.io/rforge/mqqc/man/mqqc-package.html), this dashboard aggregates and visualizes QC metrics **per project** rather than per run, making it easier to spot trends, issues, and outliers across multiple experiments over time.
+An interactive quality control dashboard for mass spectrometry proteomics data. Built on top of [MQQC by Henrik Zauber](https://rdrr.io/rforge/mqqc/man/mqqc-package.html) and [my own Raw2meta](https://github.com/KerstinFe/raw2meta), this dashboard aggregates and visualizes QC metrics **per project** rather than per run, making it easier to spot trends, issues, and outliers across multiple experiments over time.
  
 ## Background
  

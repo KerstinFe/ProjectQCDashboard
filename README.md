@@ -70,7 +70,7 @@ Although Dash supports async, the small number of concurrent users, and DuckDBs 
 ├── params.yaml                         # Runtime parameters (polling interval, thresholds, plot config)
 ├── Dockerfile.base                     # Base image (dependencies)
 ├── Dockerfile                          # Application image
-├── .env                                # Environment variables
+├── .env.example                        # Environment variables, rename to .env.dev for testing
 ├── logs/                               # Application logs (mounted into container)
 └── scripts/
     ├── rebuild.sh                      # Rebuild and restart container using dashboard-base image

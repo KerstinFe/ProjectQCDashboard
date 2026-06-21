@@ -1,9 +1,8 @@
 # Virtual environment
-venv/
-env/
-.venv/
-.venvTests/
-.vscode/
+.venv/*
+# IDE files
+.vscode/*
+.idea/
 
 # Python cache files
 __pycache__/
@@ -28,9 +27,6 @@ wheels/
 .installed.cfg
 *.egg
 
-# IDE files
-.vscode/settings.json
-.idea/
 
 # OS files
 .DS_Store
@@ -43,17 +39,9 @@ logs/
 # Environment variables
 .env
 
-# Jupyter Notebook
-.ipynb_checkpoints
-
-
-# CSV data files (optional - uncomment if you don't want to track CSV files)
-*.csv
-csvFiles/
-
+# 
 Metadata.sqlite
 list_collect.sqlite
 .pytest_cache/
-
-*.pdf
-*.svg
+TestData_delete/*
+*_testcopy_*.sqlite

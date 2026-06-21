@@ -1,135 +1,75 @@
-/* General font */
+/* =============================================================
+   Project QC Dashboard — stylesheet
+   Base · Live header/footer · Controls · Cards · Responsive · Export
+   Note: the .export-* rules are inlined into the downloaded standalone
+   HTML, which has no Bootstrap — hence body{margin:0} and the
+   self-contained .export layout (kept separate from the live .page-*).
+   ============================================================= */
+
+/* ---------- Base ---------- */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
 body {
+  margin: 0;                 /* export has no Bootstrap reboot; no-op for the live app */
   font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-  background: #eef1f6; /* slightly darker overall background */
+  background: #eef1f6;
   color: #222;
 }
 
-/* Card styling for plots */
-.graph-card {
-  background: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 6px 18px rgba(33, 37, 41, 0.06);
-  border: 1px solid rgba(17,24,39,0.08); /* slightly stronger visible border */
-  overflow: visible; /* allow header pill to overflow */
-  position: relative;
-  padding-top: 1.1rem; /* space for the top header bar */
-}
-.graph-card .card-header {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 44px;
-  background: linear-gradient(180deg, #f8fafc, #f3f4f6);
-  border-radius: 12px 12px 0 0; /* rounded top corners match card */
-  box-shadow: 0 2px 6px rgba(33,37,41,0.04);
-  z-index: 3;
-  border-left: 1px solid rgba(17,24,39,0.06);
-  border-right: 1px solid rgba(17,24,39,0.06);
-  border-top: 1px solid rgba(17,24,39,0.06);
-  border-bottom: none; /* straight bottom edge */
-  display: flex;
-  align-items: center;
-  padding: 0 16px;
-  color: #0f172a;
-  font-weight: 700; /* strong heading */
-}
-
-/* Make Plotly canvas transparent to show card rounded corners */
-.graph-card .js-plotly-plot,
-.graph-card .dash-graph,
-.graph-card .dash-graph .main-svg,
-.graph-card .dash-graph .bg,
-.graph-card .plotly,
-.graph-card .plotly .svg-container,
-.graph-card .plotly .main-svg,
-.graph-card .plotly .bg {
-  background: transparent !important;
-}
-
-/* Keep bottom corners rounded for Plotly containers */
-.graph-card .plotly,
-.graph-card .js-plotly-plot {
-  border-radius: 0 0 12px 12px;
-}
-
-/* Reduce CardBody padding so border is clearly visible */
-.graph-card .card-body {
-  padding-top: 1rem; /* make space below header bar */
-  padding-bottom: 0.6rem;
-  padding-left: 0.8rem;
-  padding-right: 0.8rem;
-}
-/* Card title styling */
-.graph-card .card-title {
-  font-weight: 600;
-  margin-bottom: 0.6rem;
-}
-
-
-/* Force the pill header title to be bold and slightly larger */
-.graph-card .card-header, .graph-card .card-header-title {
-  font-weight: 700 !important;
-  font-size: 0.95rem !important;
-}
-
-/* Small responsive spacing tweaks */
-.container-fluid {
-  padding-left: 1rem;
-  padding-right: 1rem;
-}
-
-/* Page header: dark background with white title and subtle divider */
+/* ---------- Live page header ---------- */
 .page-header {
-  background: linear-gradient(180deg, #0f172a, #0b1220); /* dark bluish gradient */
+  background: #0f172a;
   color: #fff;
   padding: 1rem 0.75rem;
-  margin: 0 -1rem 0  -1rem; /* full width edge-to-edge inside container */
-
+  margin: 0 -1rem;                       /* bleed edge-to-edge inside .container-fluid */
 }
-.page-header .page-header-content {
-  max-width: 1200px;
-  margin: 0 auto;
-}
-.page-header .page-title {
-  margin: 0;
-  font-size: 1.6rem;
-  font-weight: 700;
-  color: #fff;
+.page-header .page-header-content { max-width: 1200px; margin: 0 auto; }
+.page-header .page-title { margin: 0; font-size: 1.6rem; font-weight: 700; color: #fff; }
+.page-header .page-subtitle,
+.page-header .page-note { margin: 0; color: rgba(255,255,255,0.85); font-weight: 400; }
+.page-header, .page-header * { text-transform: none !important; }   /* block 3rd-party uppercase */
 
-}
-.page-header .page-subtitle, .page-header .page-note {
-  margin: 0;
-  color: rgba(255,255,255,0.85);
-  font-weight: 400;
-
-}
-
-/* Divider between header and controls */
-.page-header + .row, .page-header + .dbc-row {
+.page-header + .row,
+.page-header + .dbc-row {                /* divider between header and first control row */
   border-top: 1px solid rgba(255,255,255,0.08);
   padding-top: 0.75rem;
   margin-top: 0.5rem;
 }
 
-/* Strong overrides to prevent unwanted ALL-CAPS from third-party utilities */
-/* Target common utility classes and third-party selectors that set uppercase */
-.page-header, .page-header * {
-  text-transform: none !important;
+/* ---------- Live page footer ---------- */
+.page-footer {
+  background: #0f172a;
+  color: #fff;
+  padding: 1rem 0.75rem;
+  margin: 4rem -1rem 0;
+  border-top: 1px solid rgba(255,255,255,0.08);
 }
-
-/* When graphs-container gets `.single-column`, force two-column cols to full width */
-#graphs-container.single-column .col-md-6,
-#graphs-container.single-column .col-6 {
-  flex: 0 0 100% !important;
-  max-width: 100% !important;
+.page-footer-content {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  font-size: 0.85rem;
+  font-weight: 300;
 }
+.page-footer-text { color: rgba(255,255,255,0.85); font-size: inherit; }
+.page-footer-link {
+  color: rgba(255,255,255,0.85);
+  font-size: inherit;
+  font-weight: inherit;
+  text-decoration: underline;
+}
+.page-footer-link:hover { color: #fff; }
+.footer-break { flex-basis: 100%; height: 0; }   /* full-width spacer → forces a second flex line */
 
-/* Styled download button to match dashboard aesthetic */
+/* ---------- Controls (freshness line / buttons) ---------- */
+.container-fluid { padding-left: 1rem; padding-right: 1rem; }
+
+.data-refreshed { font-size: 0.8rem; color: #475569; text-align: left; padding: 0 0.25rem; }
+
 .download-btn {
-  background: linear-gradient(180deg, #0f172a, #0b1220);
+  background: #0f172a;
   color: #fff !important;
   border: 1px solid rgba(255,255,255,0.08);
   border-radius: 8px;
@@ -137,20 +77,104 @@ body {
   box-shadow: 0 6px 16px rgba(2,6,23,0.24);
   font-weight: 600;
 }
-.download-btn:hover, .download-btn:focus {
-  background: linear-gradient(180deg, #131a30, #0d1324);
+.download-btn:hover,
+.download-btn:focus {
+  background: #0f172a;
   transform: translateY(-1px);
 }
 
-/* Export page tweaks (applies when CSS is embedded into exported HTML) */
+/* ---------- Plot / table cards ---------- */
+.graph-card,
+.error-card {
+  position: relative;
+  background: #ffffff;
+  border: 1px solid rgba(17,24,39,0.08);
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(33,37,41,0.06);
+  overflow: visible;          /* let the header pill overflow */
+  padding-top: 1.1rem;        /* room for the absolutely-positioned pill */
+}
+
+/* error card sizes to its content rather than stretching */
+.error-card { height: fit-content !important; align-self: flex-start !important; }
+#error-table-style,
+#error-table-style > .col,
+#error-table-style > [class*="col-"] { align-items: flex-start !important; height: auto !important; }
+
+/* the floating title pill */
+.graph-card .card-header,
+.error-card .card-header {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  background:#f8fafc;
+  border: 1px solid rgba(17,24,39,0.06);
+  border-bottom: none;
+  border-radius: 12px 12px 0 0;
+  box-shadow: 0 2px 6px rgba(33,37,41,0.04);
+  color: #0f172a;
+  font-weight: 700;
+  z-index: 3;
+}
+.graph-card .card-header, .graph-card .card-header-title,
+.error-card .card-header, .error-card .card-header-title {
+  font-weight: 700 !important;
+  font-size: 0.95rem !important;
+}
+
+.graph-card .card-body,
+.error-card .card-body { padding: 1rem 0.8rem 0.6rem; }
+.graph-card .card-title,
+.error-card .card-title { font-weight: 600; margin-bottom: 0.6rem; }
+
+/* make the Plotly canvas transparent so the card's rounded corners show */
+.graph-card .js-plotly-plot, .graph-card .dash-graph,
+.graph-card .dash-graph .main-svg, .graph-card .dash-graph .bg,
+.graph-card .plotly, .graph-card .plotly .svg-container,
+.graph-card .plotly .main-svg, .graph-card .plotly .bg,
+.error-card .js-plotly-plot, .error-card .dash-graph,
+.error-card .dash-graph .main-svg, .error-card .dash-graph .bg,
+.error-card .plotly, .error-card .plotly .svg-container,
+.error-card .plotly .main-svg, .error-card .plotly .bg { background: transparent !important; }
+
+.graph-card .plotly, .graph-card .js-plotly-plot,
+.error-card .plotly, .error-card .js-plotly-plot { border-radius: 0 0 12px 12px; }
+
+/* ---------- Responsive ---------- */
+#graphs-container.single-column .col-md-6,
+#graphs-container.single-column .col-6 { flex: 0 0 100% !important; max-width: 100% !important; }
+.col-empty { display: none !important; }
+
+/* ---------- Exported standalone HTML ----------
+   Full-width blue bars with a centered white content strip between them.
+   Separate from .page-* because those use negative margins tuned to the
+   Bootstrap container, which the export doesn't have. */
+.export-header,
+.export-footer {
+  background: #0f172a;
+  color: #fff;
+  padding: 1.25rem 2rem;
+}
+.export-bar-inner { max-width: 1200px; margin: 0 auto; }
+
+.export-header h1 { margin: 0 0 0.25rem; color: #fff; font-weight: 700; }
+.export-meta { margin: 0; color: rgba(255,255,255,0.85); font-size: 0.9rem; }
+
+.export-footer { margin-top: 3rem; font-size: 0.85rem; }
+.export-footer a { color: rgba(255,255,255,0.9); text-decoration: underline; }
+.export-footer a:hover { color: #fff; }
+
 .export-page {
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
-  font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
   background: #fff;
   color: #0f172a;
 }
-.export-page h1 { margin-bottom: 1rem; }
-.export-plot { margin-bottom: 2.25rem; }
-.export-plot h3 { margin-bottom: 0.5rem; font-weight: 700; }
+.export-page h3 { margin-bottom: 0.5rem; font-weight: 700; }   /* section headings: tables + plots */
+.export-table { margin-bottom: 2rem; }
+.export-plot  { margin-bottom: 2.25rem; }

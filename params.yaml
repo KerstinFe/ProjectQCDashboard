@@ -1,17 +1,22 @@
 # Parameters that change between environments or experiments
+LOG_LEVEL: 'INFO'
+
 data:
-  metadata_db_path: "Metadata.sqlite"
-  mqqc_db_path: "list_collect.sqlite"
+  # metadata_db_path: "Metadata.sqlite"
+  # mqqc_db_path: "list_collect.sqlite"
   Tables_Metadata_db: ["Metadata_Project", "Metadata_Sample"]
   Tables_MQQC_db: ['SingleFileReport']
+  # mergeddb: "mergedDB.db"
 
 
 processing:
-  DaysToMonitor: 90  # means that the last sample of that project was measured 90 days ago, not that the project date is 90 days ago
-  DaysToMonitor_notRunningProject: 1
-  PollingIntervalSeconds: 60  # Polling interval for file change detection
+  # DaysToMonitor: 90  # means that the last sample of that project was measured 90 days ago, not that the project date is 90 days ago
+  # DaysToMonitor_notRunningProject: 1
+  PollingIntervalSeconds: 60  # Polling interval for file change detection in seconds -> 600 = every 10 min
   ThresholdForTwoColumnsOfGraphs: 75 # If more than this number of samples, show only one column of graphs
   ThresholdForRollingMean: 30 # If more than this number of samples, show rolling mean in graphs
+  UpdateLastXEntries: 500 # How many samples are updates when updating merged db
+
 
 
 # The order of items in this dictionary determines the order of plots everywhere:
@@ -21,20 +26,36 @@ processing:
 #   - Export order
 
 #Structure: key -> (y_label_for_data (header in SQL database), display_label, graph_id (needed for callbacks))
+# if you want to use a value that comes from the iQC and thus is in a row in the MQQC database that contains ".raw" 
+# in the "Name" column, you have add it in the key. 
+# you can plot one thing from both iQC and non iQC by entering it twice but once with "_iQC" at the end and once without. 
+# also changing the labeling of the graph and the graph ID though.
 
 ColumnsDatabase:
   PLOT_CONFIG:
-    - [Protein, ["Protein", "Proteins Identified", "Protein-graph"]]
-    - [AllPeptides, ["AllPeptides", "Peptide counts", "AllPeptides-graph"]]
-    - [Intensity_100, ["Intensity.100.", "Intensity", "Int-graph"]]
-    - [uniPepCount, ["uniPepCount", "Unique Peptide Count", "uniPepCount-graph"]]
-    - [missed_cleavages_percent, ["missed.cleavages.percent", "Missed Cleavages %", "MisCleave-graph"]]
+    - [Protein, ["Protein", "Proteins Identified MQQC", "Protein-graph"]]
+    - [msms_count, ["msms.count", "Peptide counts MQQC", "AllPeptides-graph"]]
+    - [Intensity_100, ["Intensity.100.", "Max Intensity MQQC", "Int-graph"]]
+    - [Intensity_100_iQC, ["Intensity.100.", "Max Intensity iQC", "IntiQC-graph"]]
+    - [Intensity_50, ["Intensity.50.", "MS Median Intensity MQQC", "MedInt-graph"]]
+    - [Intensity_50_iQC, ["Intensity.50.", "MS Median Intensity iQC", "MedIntiQC-graph"]]
+    - [missed_cleavages_percent, ["missed.cleavages.percent", "Missed Cleavages % MQQC", "MisCleave-graph"]]
     - [InitialPressure_Pump, ["InitialPressure_Pump", "Initial Pressure (Pump)", "InitialPressure-graph"]]
     - [MaxPressure_Pump, ["MaxPressure_Pump", "Max Pressure (Pump)", "MaxPressure_Pump-graph"]]
     - [MinPressure_Pump, ["MinPressure_Pump", "Min Pressure (Pump)", "MinPressure-graph"]]
     - [Std_Pressure_Pump, ["Std_Pressure_Pump", "Std Pressure (Pump)", "StdPressure-graph"]]
     - [AnalyzerTemp_mean, ["AnalyzerTemp_mean", "Analyzer Massspec mean temperature (°C)", "AnalyzerTempMean-graph"]]
     - [AnalyzerTemp_std, ["AnalyzerTemp_std", "Analyzer Massspec std temperature (°C)", "AnalyzerTempStd-graph"]]
+    - [precision_50, ["precision.50.", "Median Mass Precision [ppm] MQQC", "Precision-graph"]]
+
+  DB_CONFIG: ['Name', 'System.Time.s']
+
+  TABLE_CONFIG: [MSInstrument,HPLCInstrument, InstrumentMethod_print,SoftwareVersion ]
+
+
+
+  
+  
 
 
   

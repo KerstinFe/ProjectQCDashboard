@@ -1,23 +1,16 @@
-from ProjectQCDashboard.config.logger import get_configured_logger
-from ProjectQCDashboard.config.loadParams import load_params
+from ProjectQCDashboard.config.loadParams import PARAMS
 from collections import OrderedDict
 
-logger = get_configured_logger(__name__)
+TablesMetaData = PARAMS.data.Tables_Metadata_db
+TablesMQQCData = PARAMS.data.Tables_MQQC_db
 
-PARAMS = load_params()
+PollingIntervalSeconds = PARAMS.processing.PollingIntervalSeconds
+ThresholdForTwoColumnsOfGraphs = PARAMS.processing.ThresholdForTwoColumnsOfGraphs
+ThresholdForRollingMean = PARAMS.processing.ThresholdForRollingMean
+UpdateLastXEntries = PARAMS.processing.UpdateLastXEntries
 
-DATA_LOCATION = PARAMS.get('Params', {}).get('Folder')
-TablesMetaData = PARAMS.get('data', {}).get('Tables_Metadata_db')
-TablesMQQCData = PARAMS.get('data', {}).get('Tables_MQQC_db')
-
-DaysToMonitor = PARAMS.get('processing', {}).get('DaysToMonitor')
-DaysToMonitor_notRunningProject = PARAMS.get('processing', {}).get('DaysToMonitor_notRunningProject')
-PollingIntervalSeconds = PARAMS.get('processing', {}).get('PollingIntervalSeconds')
-ThresholdForTwoColumnsOfGraphs = PARAMS.get('processing', {}).get('ThresholdForTwoColumnsOfGraphs')
-ThresholdForRollingMean = PARAMS.get('processing', {}).get('ThresholdForRollingMean')
-
-plot_config_seq = PARAMS.get('ColumnsDatabase', {}).get('PLOT_CONFIG')
+plot_config_seq = PARAMS.ColumnsDatabase.PLOT_CONFIG
 PLOT_CONFIG = OrderedDict(plot_config_seq)
+DB_CONFIG = PARAMS.ColumnsDatabase.DB_CONFIG
 
-
-
+ROWS_Table = list(PARAMS.ColumnsDatabase.TABLE_CONFIG)

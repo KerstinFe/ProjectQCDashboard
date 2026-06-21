@@ -1,33 +1,28 @@
 import yaml
 from pathlib import Path
-from typing import Any, Dict
+from ProjectQCDashboard.config.schemas import Params
 
 PACKAGE_LOCATION = Path(__file__).resolve().parents[3]
 
-def load_params() -> Dict[str, Any]:
-    """Load parameters from params.yaml
-    :return: Parameters as a dictionary
-    :rtype: Dict[str, Any]
+def load_params() -> Params:
+    """
+    Load parameters from the params.yaml file in the project root.
+
+    This function attempts to read and parse the params.yaml file, returning its contents as a dictionary.
+    If the file does not exist, an empty dictionary is returned.
+
+    :return: Parameters as a dictionary, or an empty dict if not found
+    :rtype: dict[str, Any] | Any
     """
     params_file = PACKAGE_LOCATION / "params.yaml"
+    if not params_file.exists():
+        raise FileNotFoundError(f"params.yaml not found at {params_file}")
     
-    if params_file.exists():
-        with open(params_file, 'r') as f:
-            return yaml.safe_load(f)
-    return {}
+    with open(params_file, 'r', encoding='utf-8') as f:
+        raw = yaml.safe_load(f)
+    
+    return Params(**raw)
 
 
-def load_dockercompose() -> Dict[str, Any]:
-    """Load docker-compose.yml from the project root and return as dict.
+PARAMS = load_params()
 
-    Returns empty dict if file not found or cannot be parsed.
-    """
-    compose_file = PACKAGE_LOCATION / "docker-compose.yml"
-    if compose_file.exists():
-        try:
-            with open(compose_file, "r") as fh:
-                return yaml.safe_load(fh) or {}
-        except Exception:
-            # If parsing fails, return empty dict
-            return {}
-    return {}
